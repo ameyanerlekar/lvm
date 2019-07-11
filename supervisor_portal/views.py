@@ -1,7 +1,8 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import RecordForm
+from .models import Record
 
 def render_landing_page(request):
 	if request.user.is_authenticated:
@@ -40,9 +41,21 @@ def logout_user(request):
 		return render_landing_page(request)
 	
 	
+def create_record(request):
+	floor = request.POST.get("for_floor")
+	room = request.POST.get("for_room")
+	body = request.POST.get("body")
+	Record.objects.create(
+		for_floor = floor,
+		for_room = room,
+		body = body
+	)
+	return redirect("/supervisor_portal/")
+		
+	
 def test(request):
-	user = User.objects.get(username = "amrutanerlekar")
-	print(user.groups.all().values()[0]["name"])
+	record = Record.objects.all()
+	print(record)
 	return HttpResponse("check the console")
 	
 	

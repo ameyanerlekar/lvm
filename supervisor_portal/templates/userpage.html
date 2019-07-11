@@ -11,7 +11,7 @@
 			<div class="card paper-effect">
 				<div class="card-header"><p>Record: </p></div>
 				<div class="card-body">
-					<form method = "POST">
+					<form method = "POST" action = "/supervisor_portal/create_record">
 						{% csrf_token %}
 						{{ record_form.as_p }}
 						<button type = "submit" class = "btn btn-outline-dark">Create Record</button>
