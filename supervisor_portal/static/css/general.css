@@ -1,0 +1,17 @@
+.padding{
+	padding: 50px;
+}
+
+.paper-effect{
+	box-shadow: 0 0 30px #000000;
+}
+
+.warning{
+	color: red;
+}
+
+#logout_btn{
+	position: fixed;
+	right: 10px;
+	top: 15px;
+}

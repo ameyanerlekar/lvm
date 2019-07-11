@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+	<div class="jumbotron">
+		<h1>Lokamanya Vidya Mandir Trust- Supervision Portal</h1> 
+	</div>
+
+	<div class="padding">
+		<h3>Welcome, {{ user.first_name }}</h3>
+		<br><br>
+		{% if record_form %}
+			<div class="card paper-effect">
+				<div class="card-header"><p>Record: </p></div>
+				<div class="card-body">
+					<form method = "POST">
+						{% csrf_token %}
+						{{ record_form.as_p }}
+						<button type = "submit" class = "btn btn-outline-dark">Create Record</button>
+					</form>
+				</div>
+				<div class="card-footer"><small>The Date and Time For Creation of the Records will be Automatically Maintained.</small></div>
+			</div>
+		{% endif %}
+	</div>
+	
+	<form method = "POST" action = "/supervisor_portal/logout">
+		{% csrf_token %}
+		<button type = "submit" class = "btn btn-outline-danger" id = "logout_btn">Sign Out</button> 
+	</form>
+	
+	
+	
+{% endblock %}
