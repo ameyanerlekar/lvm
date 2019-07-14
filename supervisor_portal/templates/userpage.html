@@ -9,7 +9,9 @@
 		<br><br>
 		{% if record_form %}
 			<div class="card paper-effect">
-				<div class="card-header"><p>Record: </p></div>
+				<div class="card-header">
+					<p>Record: </p>
+				</div>
 				<div class="card-body">
 					<form method = "POST" action = "/supervisor_portal/create_record">
 						{% csrf_token %}
@@ -19,6 +21,67 @@
 				</div>
 				<div class="card-footer"><small>The Date and Time For Creation of the Records will be Automatically Maintained.</small></div>
 			</div>
+		{% elif record_to_edit %}
+			<div class="card paper-effect">
+				<div class="card-header">
+					<p>Edit Record: </p>
+				</div>
+				<div class="card-body">
+					<form method = "POST" action = "/supervisor_portal/edit_record">
+						{% csrf_token %}
+						<input hidden value={{record_to_edit.id}} name="record_to_edit_id">
+						<label for="id_for_floor">For floor:</label>
+						<input required type="number" name="for_floor" id="id_for_floor" value="{{record_to_edit.for_floor}}"><br><br>
+						<label for="id_for_room">For room:</label>
+						<input required type="text" name="for_room" id="id_for_room" value="{{record_to_edit.for_room}}"><br><br>
+						<label for="id_body">Body:</label>
+						<textarea rows=10 cols=40	 required name="body" id="id_body">{{record_to_edit.body}}</textarea><br><br>
+						<button type = "submit" class = "btn btn-outline-dark">Edit Record</button>
+					</form>
+				</div>
+				<!--<div class="card-footer"><small>The Date and Time For Creation of the Records will be Automatically Maintained.</small></div>-->
+			</div>
+		{% endif %}
+		
+		{% if records %}
+			<div class="form-group">
+			  <!--<label for="searchBar">Search for a Record:</label>-->
+			  <input type="text" class="form-control" id="searchBar" placeholder="Search for a Record...">
+			</div>
+			<table id = "recordsTable">
+				<tr><th>Date</th><th>&nbsp&nbspFloor&nbsp&nbsp</th><th>&nbsp&nbspRoom&nbsp&nbsp</th><th>&nbsp&nbspDescription&nbsp&nbsp</th><th>&nbsp&nbspActions&nbsp&nbsp</th></tr>
+				{% for record in records %}
+					<tr>
+						<td>{{record.date}}</td>
+						<td>{{record.for_floor}}</td>
+						<td>{{record.for_room}}</td>
+						<td>{{record.body}}</td>
+						<td>
+							<form method = "POST" action="/supervisor_portal/modify_record">
+								{% csrf_token %}
+								<input name="record_id" hidden type="text" value="{{record.id}}"> 
+								<button type="submit" class="btn btn-outline-primary" name="action" value="edit">Edit</button>
+								<button type="submit" class="btn btn-outline-danger" name="action" value="delete">Delete</button>
+							</form>
+						</td>
+						</tr>
+				{% endfor %}
+			</table>
+<!--
+			<h1 style="color:#e0e0e0;text-align:center;"></h1>-->
+		{% endif %}
+		
+		{% if message %}
+			<div class="toast" data-autohide="false">
+			  <div class="toast-header">
+				<strong class="mr-auto text-primary">Info:</strong>
+				<small class="text-muted"></small>
+				<button  type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
+			  </div>
+			  <div class="toast-body">
+				{{message}}
+			  </div>
+			</div>	
 		{% endif %}
 	</div>
 	

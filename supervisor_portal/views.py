@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from .forms import RecordForm
 from .models import Record
+import datetime
 
 def render_landing_page(request):
 	if request.user.is_authenticated:
@@ -24,15 +25,23 @@ def log_user_in(request):
 		return render_userpage(request)
 	
 	
-def render_userpage(request):
+def render_userpage(request, message=None):
 	if request.user.is_authenticated:
 		user = User.objects.get(username = request.user)
 		user_groups = [ group["name"] for group in user.groups.all().values() ]
 		if "management" in user_groups:
 			form = RecordForm()
-			return render(request, "userpage.html", {"user": user, "record_form": form})
+			return render(request, "userpage.html", {"user": user, "record_form": form, "message": message})
+		elif "trustee" in user_groups:
+			try:
+				records = Record.objects.all()[-1:-10]
+			except Exception as e:
+				records = Record.objects.all()
+			#if len(records) == 0:
+			#	message = "-- No Records To Show Yet --"
+			return render(request, "userpage.html", {"records": records, "message": message})
 		else:
-			return render(request, "userpage.html", {"user": user})
+			return render(request, "userpage.html", {"user": use, "message": message})
 	
 	
 def logout_user(request):
@@ -51,7 +60,31 @@ def create_record(request):
 		body = body
 	)
 	return redirect("/supervisor_portal/")
+	
+	
+def modify_record(request):
+	if request.user.is_authenticated:
+		action = request.POST.get("action")
+		record_id = request.POST.get("record_id")
+		if action == "edit":
+			record_to_edit = Record.objects.get(id = record_id)
+			form = RecordForm()
+			return render(request, "userpage.html", {"record_to_edit": record_to_edit})
+		else:
+			record_to_delete = Record.objects.get(id = record_id)
+			record_to_delete.delete()
+			return render_userpage(request, "Record Deleted Successfully!")
 		
+		
+def edit_record(request):
+	if request.user.is_authenticated:
+		record_to_edit = Record.objects.get(id = request.POST.get("record_to_edit_id"))
+		record_to_edit.for_floor = request.POST.get("for_floor")
+		record_to_edit.for_room = request.POST.get("for_room")
+		record_to_edit.body = request.POST.get("body")
+		record_to_edit.save()
+		return render_userpage(request, "Record Edited Successfully!")
+	
 	
 def test(request):
 	record = Record.objects.all()

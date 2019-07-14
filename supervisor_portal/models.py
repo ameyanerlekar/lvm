@@ -27,5 +27,5 @@ class Record(models.Model):
 	for_floor = models.IntegerField()
 	for_room = models.CharField(max_length=10)
 	body = models.TextField()
-	date = models.DateTimeField(auto_now = True)
+	date = models.DateField(auto_now = True)
 	
